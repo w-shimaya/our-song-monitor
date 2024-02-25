@@ -13,16 +13,27 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-
+/**
+ * Notify playlist changes.
+ */
 @AllArgsConstructor
 @Component
 @Slf4j
 public class PlaylistChangeNotifier implements ItemProcessor<PlaylistHistory, List<PlaylistItem>> {
 
+  /**
+   * Discord client.
+   */
   private final DiscordWebhookClient discordWebhookClient;
 
+  /**
+   * Discord message builder.
+   */
   private final DiscordMessageBuilder messageBuilder;
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public List<PlaylistItem> process(@NonNull final PlaylistHistory item) {
     List<PlaylistItem> addedItems = item.enumerateAddedItems();

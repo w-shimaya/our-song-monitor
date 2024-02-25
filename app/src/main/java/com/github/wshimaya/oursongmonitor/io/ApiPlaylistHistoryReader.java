@@ -11,16 +11,31 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+/**
+ * Fetch playlist info from YouTube API and cache in S3.
+ */
 @Component
 @RequiredArgsConstructor
 public class ApiPlaylistHistoryReader implements PlaylistHistoryReader {
 
+  /**
+   * Process finished or not.
+   */
   private boolean isFinished = false;
 
+  /**
+   * S3 client.
+   */
   private final S3PlaylistClient s3PlaylistClient;
 
+  /**
+   * Youtube API client.
+   */
   private final YoutubePlaylistClient youtubePlaylistClient;
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public PlaylistHistory read() {
     if (isFinished) {

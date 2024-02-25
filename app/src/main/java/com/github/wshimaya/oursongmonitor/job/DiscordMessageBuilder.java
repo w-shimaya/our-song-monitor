@@ -12,6 +12,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.stereotype.Component;
 
+/**
+ * Discord message builder.
+ */
 @Component
 public class DiscordMessageBuilder {
 
@@ -20,6 +23,13 @@ public class DiscordMessageBuilder {
    */
   private static final String YOUTUBE_URL_PREFIX = "https://youtube.com/watch?v=";
 
+  /**
+   * Summarize added/removed items and build message to post Discord webhook.
+   *
+   * @param addedItems added playlist items
+   * @param removedItems removed playlist items
+   * @return message body
+   */
   public MessageBody build(final List<PlaylistItem> addedItems,
       final List<PlaylistItem> removedItems) {
     int numDisplayAdded = addedItems.size();

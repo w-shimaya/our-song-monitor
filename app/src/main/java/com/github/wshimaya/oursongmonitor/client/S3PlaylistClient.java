@@ -10,6 +10,9 @@ import java.util.List;
 import javax.annotation.Nullable;
 import lombok.AllArgsConstructor;
 
+/**
+ * S3 client to download/upload playlist information.
+ */
 @AllArgsConstructor
 public class S3PlaylistClient {
 
