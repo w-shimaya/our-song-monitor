@@ -1,9 +1,7 @@
-package com.github.wshimaya.oursongmonitor;
+package com.github.wshimaya.oursongmonitor.client;
 
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
@@ -11,8 +9,6 @@ import com.google.api.client.json.GenericJson;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -20,10 +16,12 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import javax.annotation.Nullable;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Amazon S3 client.
  */
+@Slf4j
 public class S3Client {
 
   /**
@@ -86,14 +84,14 @@ public class S3Client {
       jsonGenerator.serialize(object);
       json = writer.toString();
     } catch (IOException exception) {
-      MonitorHandler.logger.log("ERROR: An error has occurred in serializing object: %s\n"
+      log.error("An error has occurred in serializing object: %s\n"
           .formatted(exception.getMessage()));
     }
 
     try {
       s3.putObject(bucketName, key, json);
     } catch (AmazonServiceException exception) {
-      MonitorHandler.logger.log(exception.getMessage());
+      log.error(exception.getMessage());
       return false;
     }
     return true;
@@ -108,7 +106,7 @@ public class S3Client {
    * @return The newest object if any
    */
   @Nullable
-  public S3ObjectSummary findNewestObject(final String bucketName,
+  public S3ObjectSummary findNewestObjectSummary(final String bucketName,
       final String prefix,
       final String suffix) {
     var result = s3.listObjects(bucketName, prefix);

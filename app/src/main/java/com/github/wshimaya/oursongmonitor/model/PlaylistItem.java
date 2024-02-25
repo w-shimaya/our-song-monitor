@@ -2,14 +2,18 @@ package com.github.wshimaya.oursongmonitor.model;
 
 import com.google.api.client.json.GenericJson;
 import com.google.api.client.util.Key;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * Data model of PlaylistItem.
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PlaylistItem extends GenericJson {
 
   /**
@@ -23,9 +27,9 @@ public class PlaylistItem extends GenericJson {
    */
   @Override
   public GenericJson set(String fieldName, Object value) {
-    if (fieldName.equals("snippet") && value instanceof GenericJson) {
+    if (fieldName.equals("snippet") && value instanceof GenericJson valueJson) {
       snippet = new PlaylistItemSnippet();
-      ((GenericJson) value).forEach(snippet::set);
+      valueJson.forEach(snippet::set);
     } else {
       super.set(fieldName, value);
     }

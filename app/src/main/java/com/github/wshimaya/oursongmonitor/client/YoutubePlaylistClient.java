@@ -1,16 +1,13 @@
-package com.github.wshimaya.oursongmonitor;
+package com.github.wshimaya.oursongmonitor.client;
 
 import static java.util.Objects.nonNull;
 
 import com.github.wshimaya.oursongmonitor.model.PlaylistItem;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.youtube.YouTube;
-import com.google.api.services.youtube.YouTube.Builder;
 import com.google.api.services.youtube.YouTube.PlaylistItems;
 import com.google.api.services.youtube.model.PlaylistItemListResponse;
+import io.micrometer.common.lang.NonNull;
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,7 +16,7 @@ import javax.annotation.Nullable;
 /**
  * Client of YouTube Data API.
  */
-public class PlaylistItemsClient {
+public class YoutubePlaylistClient {
 
   /**
    * YouTube API.
@@ -32,26 +29,32 @@ public class PlaylistItemsClient {
   private final String apiKey;
 
   /**
-   * Constructor.
-   *
-   * @param youtube Youtube API client
-   * @param apiKey API key
+   * Target Playlist ID.
    */
-  public PlaylistItemsClient(final YouTube youtube, final String apiKey) {
+  private final String playlistId;
+
+  /**
+   * Constructor.
+   *  @param youtube Youtube API client
+   * @param apiKey  API key
+   * @param playlistId Playlist ID
+   */
+  public YoutubePlaylistClient(@NonNull final YouTube youtube,
+      @NonNull final String apiKey,
+      @NonNull final String playlistId) {
     this.youtube = youtube;
     this.apiKey = apiKey;
+    this.playlistId = playlistId;
   }
 
   /**
    * Fetch all items in a playlist. Send some requests if necessary.
    *
-   * @param playlistId Playlist ID
    * @return List of playlist items
    */
   @Nullable
-  public List<PlaylistItem> fetchAllPlaylistItems(final String playlistId) {
-    List<com.github.wshimaya.oursongmonitor.model.PlaylistItem> playlistItems
-        = new ArrayList<>();
+  public List<PlaylistItem> fetchAllPlaylistItems() {
+    List<PlaylistItem> playlistItems = new ArrayList<>();
     String nextPageToken = null;
     do {
       try {
@@ -64,13 +67,11 @@ public class PlaylistItemsClient {
         }
         PlaylistItemListResponse res = list.execute();
         var items = res.getItems().stream()
-            .map(PlaylistItemsClient::extractFields)
+            .map(YoutubePlaylistClient::extractFields)
             .collect(Collectors.toList());
         playlistItems.addAll(items);
         nextPageToken = res.getNextPageToken();
       } catch (IOException exception) {
-        MonitorHandler.logger.log("Failed to fetch playlist items: %s\n"
-            .formatted(exception.getMessage()));
         return null;
       }
     } while (nonNull(nextPageToken));

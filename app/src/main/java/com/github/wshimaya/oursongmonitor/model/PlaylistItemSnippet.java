@@ -2,14 +2,18 @@ package com.github.wshimaya.oursongmonitor.model;
 
 import com.google.api.client.json.GenericJson;
 import com.google.api.client.util.Key;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * Data model of playlist item snippet.
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PlaylistItemSnippet extends GenericJson {
 
   /**
