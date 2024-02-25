@@ -24,7 +24,7 @@ class ApiPlaylistHistoryReaderTest {
   YoutubePlaylistClient youtubePlaylistClient;
 
   @Test
-  void read() {
+  void read() throws Exception {
     when(s3PlaylistClient.findPreviousPlaylist()).thenReturn(new PlaylistItemList(List.of()));
     when(youtubePlaylistClient.fetchAllPlaylistItems()).thenReturn(List.of(
         new PlaylistItem(new PlaylistItemSnippet())));
@@ -41,7 +41,7 @@ class ApiPlaylistHistoryReaderTest {
   }
 
   @Test
-  void read_no_cache() {
+  void read_no_cache() throws Exception {
     when(s3PlaylistClient.findPreviousPlaylist()).thenReturn(null);
     when(youtubePlaylistClient.fetchAllPlaylistItems()).thenReturn(
         List.of(new PlaylistItem()));
@@ -55,7 +55,7 @@ class ApiPlaylistHistoryReaderTest {
   }
 
   @Test
-  void read_failed_to_fetch_current_list() {
+  void read_failed_to_fetch_current_list() throws Exception {
     when(youtubePlaylistClient.fetchAllPlaylistItems()).thenReturn(null);
 
     var target = new ApiPlaylistHistoryReader(s3PlaylistClient, youtubePlaylistClient);

@@ -1,18 +1,12 @@
 package com.github.wshimaya.oursongmonitor.client;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.net.URI;
+import io.micrometer.common.lang.NonNull;
 import java.net.http.HttpClient;
-import java.net.http.HttpClient.Version;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchProperties.Restclient;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -41,7 +35,8 @@ public class DiscordWebhookClient {
    *
    * @param webhookUrl URL of Discord webhook
    */
-  public DiscordWebhookClient(final String webhookUrl, final RestTemplate restTemplate) {
+  public DiscordWebhookClient(@NonNull final String webhookUrl,
+      @NonNull final RestTemplate restTemplate) {
     this.webhookUrl = webhookUrl;
     this.restTemplate = restTemplate;
   }
@@ -51,7 +46,7 @@ public class DiscordWebhookClient {
    *
    * @param body {@link MessageBody}
    */
-  public void sendMessage(final MessageBody body) {
+  public void sendMessage(@NonNull final MessageBody body) {
     try {
       String response = restTemplate.postForObject(webhookUrl, body, String.class);
     } catch (Exception exception) {

@@ -1,6 +1,8 @@
 package com.github.wshimaya.oursongmonitor.client;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -17,6 +19,7 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.util.StringInputStream;
 import com.github.wshimaya.oursongmonitor.model.PlaylistItem;
 import com.github.wshimaya.oursongmonitor.model.PlaylistItemList;
+import com.google.api.client.json.GenericJson;
 import com.google.api.client.util.Key;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +27,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -111,7 +115,7 @@ class S3ClientTest {
   }
 
   @Test
-  void testPutJsonObjectTest() {
+  void testPutJsonObjectTest() throws Exception {
     ArgumentMatcher<String> jsonMatcher = json -> {
       try {
         JSONAssert.assertEquals(json, "{\"items\":[{}]}", false);
@@ -131,8 +135,19 @@ class S3ClientTest {
 
   }
 
+  @Test
+  void testPutJsonObjectTest_AmazonServiceException() {
+    when(s3.putObject(anyString(), anyString(), anyString())).thenThrow(AmazonServiceException.class);
+
+    var target = new S3Client(s3);
+
+    assertThatThrownBy(() -> target.putJsonObject("bucketName", "key", new TestObject()))
+        .isInstanceOf(AmazonServiceException.class);
+  }
+
+  @EqualsAndHashCode(callSuper = true)
   @Data
-  public static class TestObject implements Serializable {
+  public static class TestObject extends GenericJson implements Serializable {
 
     @Key
     private String key;

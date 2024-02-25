@@ -37,7 +37,7 @@ public class ApiPlaylistHistoryReader implements PlaylistHistoryReader {
    * {@inheritDoc}
    */
   @Override
-  public PlaylistHistory read() {
+  public PlaylistHistory read() throws Exception {
     if (isFinished) {
       return null;
     }

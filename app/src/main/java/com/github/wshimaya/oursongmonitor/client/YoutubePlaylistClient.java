@@ -35,8 +35,9 @@ public class YoutubePlaylistClient {
 
   /**
    * Constructor.
-   *  @param youtube Youtube API client
-   * @param apiKey  API key
+   *
+   * @param youtube    Youtube API client
+   * @param apiKey     API key
    * @param playlistId Playlist ID
    */
   public YoutubePlaylistClient(@NonNull final YouTube youtube,
@@ -53,27 +54,23 @@ public class YoutubePlaylistClient {
    * @return List of playlist items
    */
   @Nullable
-  public List<PlaylistItem> fetchAllPlaylistItems() {
+  public List<PlaylistItem> fetchAllPlaylistItems() throws IOException {
     List<PlaylistItem> playlistItems = new ArrayList<>();
     String nextPageToken = null;
     do {
-      try {
-        PlaylistItems.List list = youtube.playlistItems()
-            .list(List.of("snippet"))
-            .setPlaylistId(playlistId)
-            .setKey(apiKey);
-        if (nonNull(nextPageToken)) {
-          list = list.setPageToken(nextPageToken);
-        }
-        PlaylistItemListResponse res = list.execute();
-        var items = res.getItems().stream()
-            .map(YoutubePlaylistClient::extractFields)
-            .collect(Collectors.toList());
-        playlistItems.addAll(items);
-        nextPageToken = res.getNextPageToken();
-      } catch (IOException exception) {
-        return null;
+      PlaylistItems.List list = youtube.playlistItems()
+          .list(List.of("snippet"))
+          .setPlaylistId(playlistId)
+          .setKey(apiKey);
+      if (nonNull(nextPageToken)) {
+        list = list.setPageToken(nextPageToken);
       }
+      PlaylistItemListResponse res = list.execute();
+      var items = res.getItems().stream()
+          .map(YoutubePlaylistClient::extractFields)
+          .collect(Collectors.toList());
+      playlistItems.addAll(items);
+      nextPageToken = res.getNextPageToken();
     } while (nonNull(nextPageToken));
 
     return playlistItems;

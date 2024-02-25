@@ -2,8 +2,10 @@ package com.github.wshimaya.oursongmonitor.client;
 
 import static java.util.Objects.isNull;
 
+import com.amazonaws.AmazonServiceException;
 import com.github.wshimaya.oursongmonitor.model.PlaylistItem;
 import com.github.wshimaya.oursongmonitor.model.PlaylistItemList;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -58,7 +60,7 @@ public class S3PlaylistClient {
    *
    * @param playlistItems playlist
    */
-  public void putPlaylist(List<PlaylistItem> playlistItems) {
+  public void putPlaylist(List<PlaylistItem> playlistItems) throws IOException, AmazonServiceException {
     var key = s3Directory
         + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
         + "-"

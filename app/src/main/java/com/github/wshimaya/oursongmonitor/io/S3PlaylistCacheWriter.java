@@ -24,7 +24,7 @@ public class S3PlaylistCacheWriter implements PlaylistWriter {
    * {@inheritDoc}
    */
   @Override
-  public void write(@NonNull final Chunk<? extends List<PlaylistItem>> chunk) {
+  public void write(@NonNull final Chunk<? extends List<PlaylistItem>> chunk) throws Exception {
     for (List<PlaylistItem> list : chunk) {
       s3Client.putPlaylist(list);
     }
