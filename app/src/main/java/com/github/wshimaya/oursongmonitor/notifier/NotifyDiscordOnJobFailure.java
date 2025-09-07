@@ -2,6 +2,7 @@ package com.github.wshimaya.oursongmonitor.notifier;
 
 import com.github.wshimaya.oursongmonitor.adapter.discord.DiscordWebhookClient;
 import com.github.wshimaya.oursongmonitor.adapter.discord.DiscordWebhookClient.MessageBody;
+import com.github.wshimaya.oursongmonitor.configuration.AppConfiguration;
 import lombok.AllArgsConstructor;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Component;
 public class NotifyDiscordOnJobFailure implements JobExecutionListener {
 
   private final DiscordWebhookClient client;
+
+  private final AppConfiguration configuration;
 
   @Override
   public void afterJob(@NonNull final JobExecution jobExecution) {
@@ -29,6 +32,7 @@ public class NotifyDiscordOnJobFailure implements JobExecutionListener {
         .orElse("unknown cause")
         .replaceAll("[\\r\\n\\t]+", " ");
     var body = MessageBody.builder()
+        .username(configuration.getDisplayName())
         .content(message)
         .build();
     client.sendMessage(body);

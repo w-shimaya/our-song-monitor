@@ -110,7 +110,7 @@ class S3OpsTest {
             .key("key")
             .bucket("bucket")
             .build(),
-            RequestBody.fromString("{\"key\": \"value\"}"));
+            RequestBody.fromString("{\"key\":\"value\"}"));
   }
 //
 //  @Test
@@ -124,11 +124,9 @@ class S3OpsTest {
 //        .isInstanceOf(AmazonServiceException.class);
 //  }
 
-  @EqualsAndHashCode(callSuper = true)
   @Data
-  public static class TestObject extends GenericJson implements Serializable {
+  public static class TestObject  implements Serializable {
 
-    @Key
     private String key;
   }
 }

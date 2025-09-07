@@ -6,16 +6,19 @@ import com.github.wshimaya.oursongmonitor.adapter.discord.DiscordWebhookClient.M
 import com.github.wshimaya.oursongmonitor.adapter.discord.DiscordWebhookClient.MessageBody.Embed;
 import com.github.wshimaya.oursongmonitor.adapter.discord.DiscordWebhookClient.MessageBody.Embed.Field;
 import com.github.wshimaya.oursongmonitor.adapter.discord.DiscordWebhookClient.MessageBody.Embed.Thumbnail;
+import com.github.wshimaya.oursongmonitor.configuration.AppConfiguration;
 import com.github.wshimaya.oursongmonitor.domain.PlaylistHistory;
 import com.github.wshimaya.oursongmonitor.domain.PlaylistItem;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
  * Discord message builder.
  */
+@AllArgsConstructor
 @Component
 public class DiscordMessageBuilder {
 
@@ -23,6 +26,8 @@ public class DiscordMessageBuilder {
    * Prefix to build URL to YouTube videos.
    */
   private static final String YOUTUBE_URL_PREFIX = "https://youtube.com/watch?v=";
+
+  private final AppConfiguration configuration;
 
   /**
    * Summarize added/removed items and build message to post Discord webhook.
@@ -44,14 +49,11 @@ public class DiscordMessageBuilder {
     List<Embed> embeds = buildAddedMessages(addedItems.stream().limit(numDisplayAdded).toList());
     embeds.addAll(buildRemovedMessages(removedItems).stream().limit(numDisplayRemoved).toList());
 
-    if (history.getPreviousList().getItems().isEmpty()) {
-      return MessageBody.builder()
-          .content("Start watching playlist!")
-          .embeds(embeds)
-          .build();
-    }
-
     return MessageBody.builder()
+        .username(configuration.getDisplayName())
+        .content(history.getPreviousList().getItems().isEmpty()
+            ? "Start watching playlist!"
+            : null)
         .embeds(embeds)
         .build();
   }

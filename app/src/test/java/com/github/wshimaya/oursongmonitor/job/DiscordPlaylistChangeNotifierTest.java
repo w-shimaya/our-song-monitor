@@ -34,7 +34,8 @@ class DiscordPlaylistChangeNotifierTest {
     var removed = PlaylistItem.builder().videoId("removed").build();
     List<PlaylistItem> current = List.of(added);
     List<PlaylistItem> previous = List.of(removed);
-    when(messageBuilder.build(List.of(added), List.of(removed)))
+    when(messageBuilder.build(new PlaylistHistory(
+        new PlaylistItemList(current), new PlaylistItemList(previous))))
         .thenReturn(MessageBody.builder()
             .embeds(List.of(Embed.builder().build()))
             .build());

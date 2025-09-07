@@ -2,17 +2,23 @@ package com.github.wshimaya.oursongmonitor.domain;
 
 import static java.util.Objects.isNull;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
  * List of playlist items to store.
  */
-@AllArgsConstructor
 @Data
-public class PlaylistItemList {
+public class PlaylistItemList implements Serializable {
+
+  @JsonCreator
+  public PlaylistItemList(@JsonProperty("items") List<PlaylistItem> items) {
+    this.items = items;
+  }
 
   /**
    * Items.
@@ -31,7 +37,7 @@ public class PlaylistItemList {
     return items.stream()
         .filter(item -> !src.getItems().stream()
             .map(PlaylistItem::getVideoId)
-            .collect(Collectors.toList())
+            .toList()
             .contains(item.getVideoId()))
         .collect(Collectors.toList());
   }
@@ -44,7 +50,7 @@ public class PlaylistItemList {
     return src.getItems().stream()
         .filter(item -> !items.stream()
             .map(PlaylistItem::getVideoId)
-            .collect(Collectors.toList())
+            .toList()
             .contains(item.getVideoId()))
         .collect(Collectors.toList());
   }

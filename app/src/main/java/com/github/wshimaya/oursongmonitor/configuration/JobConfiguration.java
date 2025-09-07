@@ -7,7 +7,6 @@ import com.github.wshimaya.oursongmonitor.adapter.playlist.client.S3PlaylistClie
 import com.github.wshimaya.oursongmonitor.adapter.playlist.client.YoutubePlaylistClient;
 import com.github.wshimaya.oursongmonitor.adapter.playlist.mapper.YoutubePlaylistItemMapper;
 import com.github.wshimaya.oursongmonitor.domain.PlaylistHistory;
-import com.github.wshimaya.oursongmonitor.domain.PlaylistItem;
 import com.github.wshimaya.oursongmonitor.domain.PlaylistItemList;
 import com.github.wshimaya.oursongmonitor.io.PlaylistHistoryReader;
 import com.github.wshimaya.oursongmonitor.io.PlaylistSnapshotWriter;
@@ -21,7 +20,6 @@ import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.youtube.YouTube.Builder;
 import io.micrometer.common.lang.NonNull;
-import java.util.List;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;

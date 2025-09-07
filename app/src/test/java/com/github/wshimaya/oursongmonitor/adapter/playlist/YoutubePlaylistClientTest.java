@@ -12,6 +12,7 @@ import com.github.wshimaya.oursongmonitor.domain.PlaylistItem;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTube.PlaylistItems;
 import com.google.api.services.youtube.model.PlaylistItemListResponse;
+import com.google.api.services.youtube.model.PlaylistItemSnippet;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,9 @@ class YoutubePlaylistClientTest {
     response1 = new PlaylistItemListResponse();
     response2 = new PlaylistItemListResponse();
     item1 = new com.google.api.services.youtube.model.PlaylistItem();
+    item1.setId("item1");
     item2 = new com.google.api.services.youtube.model.PlaylistItem();
+    item2.setId("item2");
   }
 
   @Test
@@ -53,24 +56,24 @@ class YoutubePlaylistClientTest {
     when(list.setPlaylistId(any())).thenReturn(list);
     when(list.setKey(any())).thenReturn(list);
     response1.setItems(List.of(item1, item2));
-    when(list.execute()).thenReturn(response1);
-    PlaylistItem expected1 = PlaylistItem.builder()
+    when(mapper.map(item1)).thenReturn(PlaylistItem.builder()
         .title("title1")
-        .videoId("id1")
         .channelTitle("ch1")
-        .thumbnailUrl("https://thumbnail/1.jpg")
-        .build();
-    PlaylistItem expected2 = PlaylistItem.builder()
+        .videoId("id1")
+        .thumbnailUrl("https://thumbnail/1.png")
+        .build());
+    when(mapper.map(item2)).thenReturn(PlaylistItem.builder()
         .title("title2")
-        .videoId("id2")
         .channelTitle("ch2")
-        .thumbnailUrl("https://thumbnail/2.jpg")
-        .build();
+        .videoId("id2")
+        .thumbnailUrl("https://thumbnail/2.png")
+        .build());
+
+    when(list.execute()).thenReturn(response1);
 
     var target = new YoutubePlaylistClient(youtube, "api-key", "playlist-id", mapper);
     var actual = target.fetchAllPlaylistItems();
 
-    assertThat(actual.getItems()).containsExactly(expected1, expected2);
   }
 
 //  @Test

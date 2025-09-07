@@ -26,7 +26,4 @@ public class S3Configuration {
    */
   @NotBlank
   private String directoryName;
-
-  @NotBlank
-  private String stagingDirectoryName;
 }
