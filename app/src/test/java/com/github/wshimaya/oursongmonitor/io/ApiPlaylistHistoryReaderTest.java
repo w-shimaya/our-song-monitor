@@ -3,11 +3,10 @@ package com.github.wshimaya.oursongmonitor.io;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-import com.github.wshimaya.oursongmonitor.client.S3PlaylistClient;
-import com.github.wshimaya.oursongmonitor.client.YoutubePlaylistClient;
-import com.github.wshimaya.oursongmonitor.model.PlaylistItem;
-import com.github.wshimaya.oursongmonitor.model.PlaylistItemList;
-import com.github.wshimaya.oursongmonitor.model.PlaylistItemSnippet;
+import com.github.wshimaya.oursongmonitor.adapter.playlist.client.S3PlaylistClient;
+import com.github.wshimaya.oursongmonitor.adapter.playlist.client.YoutubePlaylistClient;
+import com.github.wshimaya.oursongmonitor.domain.PlaylistItem;
+import com.github.wshimaya.oursongmonitor.domain.PlaylistItemList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,33 +24,39 @@ class ApiPlaylistHistoryReaderTest {
 
   @Test
   void read() throws Exception {
-    when(s3PlaylistClient.findPreviousPlaylist()).thenReturn(new PlaylistItemList(List.of()));
-    when(youtubePlaylistClient.fetchAllPlaylistItems()).thenReturn(List.of(
-        new PlaylistItem(new PlaylistItemSnippet())));
+    when(s3PlaylistClient.fetchPlaylistItems()).thenReturn(new PlaylistItemList(List.of()));
+    when(youtubePlaylistClient.fetchAllPlaylistItems()).thenReturn(new PlaylistItemList(List.of(
+        PlaylistItem.builder()
+            .title("title")
+            .videoId("id")
+            .channelTitle("ch")
+            .thumbnailUrl("url")
+            .build())));
 
     var target = new ApiPlaylistHistoryReader(s3PlaylistClient, youtubePlaylistClient);
 
     var actual = target.read();
 
     assertThat(actual).isNotNull();
-    assertThat(actual.getPreviousList()).isEmpty();
-    assertThat(actual.getCurrentList()).isNotEmpty();
+    assertThat(actual.getPreviousList().getItems()).isEmpty();
+    assertThat(actual.getCurrentList().getItems()).isNotEmpty();
 
     assertThat(target.read()).isNull();
   }
 
   @Test
   void read_no_cache() throws Exception {
-    when(s3PlaylistClient.findPreviousPlaylist()).thenReturn(null);
-    when(youtubePlaylistClient.fetchAllPlaylistItems()).thenReturn(
-        List.of(new PlaylistItem()));
+    when(s3PlaylistClient.fetchPlaylistItems()).thenReturn(null);
+    when(youtubePlaylistClient.fetchAllPlaylistItems()).thenReturn(new PlaylistItemList(
+        List.of(PlaylistItem.builder()
+            .build())));
 
     var target = new ApiPlaylistHistoryReader(s3PlaylistClient, youtubePlaylistClient);
     var actual = target.read();
 
     assertThat(actual).isNotNull();
-    assertThat(actual.getPreviousList()).isEmpty();
-    assertThat(actual.getCurrentList()).isNotEmpty();
+    assertThat(actual.getPreviousList().getItems()).isEmpty();
+    assertThat(actual.getCurrentList().getItems()).isNotEmpty();
   }
 
   @Test

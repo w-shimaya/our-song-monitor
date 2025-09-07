@@ -1,7 +1,9 @@
-package com.github.wshimaya.oursongmonitor.client;
+package com.github.wshimaya.oursongmonitor.adapter.discord;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import io.micrometer.common.lang.NonNull;
+import io.micrometer.common.lang.Nullable;
 import java.net.http.HttpClient;
 import java.util.List;
 import lombok.Builder;
@@ -26,11 +28,6 @@ public class DiscordWebhookClient {
   private final String webhookUrl;
 
   /**
-   * Mapper {@link ObjectMapper}.
-   */
-  private final ObjectMapper mapper = new ObjectMapper();
-
-  /**
    * Constructor.
    *
    * @param webhookUrl URL of Discord webhook
@@ -48,24 +45,29 @@ public class DiscordWebhookClient {
    */
   public void sendMessage(@NonNull final MessageBody body) {
     try {
-      String response = restTemplate.postForObject(webhookUrl, body, String.class);
+      restTemplate.postForObject(webhookUrl, body, String.class);
     } catch (Exception exception) {
       log.error("Failed to send a discord message: {}", exception.getMessage());
+      throw exception;
     }
   }
 
   /**
-   * Data model of <a href="https://discord.com/developers/docs/resources/webhook#execute-webhook">message
-   * body</a>.
+   * Data model of <a
+   * href="https://discord.com/developers/docs/resources/webhook#execute-webhook">message body</a>.
    */
   @Builder
   @Data
+  @JsonInclude(Include.NON_NULL)
   public static class MessageBody {
 
     /**
      * Maximum number of embeds.
      */
     public static final int MAX_EMBED_NUM = 10;
+
+    @Nullable
+    String username;
 
     /**
      * Content of a simple message.
@@ -78,7 +80,8 @@ public class DiscordWebhookClient {
     List<Embed> embeds;
 
     /**
-     * Data model of <a href="https://discord.com/developers/docs/resources/channel#embed-object">embeds</a>.
+     * Data model of <a
+     * href="https://discord.com/developers/docs/resources/channel#embed-object">embeds</a>.
      */
     @Builder
     @Data
@@ -115,7 +118,8 @@ public class DiscordWebhookClient {
       List<Field> fields;
 
       /**
-       * Data model of <a href="https://discord.com/developers/docs/resources/channel#embed-object-embed-field-structure">embed
+       * Data model of <a
+       * href="https://discord.com/developers/docs/resources/channel#embed-object-embed-field-structure">embed
        * fields</a>.
        */
       @Builder
@@ -139,7 +143,8 @@ public class DiscordWebhookClient {
       }
 
       /**
-       * Data model of <a href="https://discord.com/developers/docs/resources/channel#embed-object-embed-thumbnail-structure">embed
+       * Data model of <a
+       * href="https://discord.com/developers/docs/resources/channel#embed-object-embed-thumbnail-structure">embed
        * thumbnails</a>.
        */
       @Builder

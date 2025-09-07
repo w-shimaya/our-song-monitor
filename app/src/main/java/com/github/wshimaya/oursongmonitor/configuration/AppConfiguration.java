@@ -35,4 +35,13 @@ public class AppConfiguration {
    */
   @NotBlank
   private String playlistId;
+
+  /**
+   * Version of this app.
+   */
+  private String version;
+
+  public String getDisplayName() {
+    return String.format("みんなのうた [%s]", version);
+  }
 }

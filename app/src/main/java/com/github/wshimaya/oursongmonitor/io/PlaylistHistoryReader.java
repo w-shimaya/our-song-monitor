@@ -1,6 +1,6 @@
 package com.github.wshimaya.oursongmonitor.io;
 
-import com.github.wshimaya.oursongmonitor.model.PlaylistHistory;
+import com.github.wshimaya.oursongmonitor.domain.PlaylistHistory;
 import org.springframework.batch.item.ItemReader;
 
 /**

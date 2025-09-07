@@ -19,7 +19,6 @@ public class S3Configuration {
    * Bucket name.
    */
   @NotEmpty
-  @Pattern(regexp = ".+/$")
   private String bucketName;
 
   /**

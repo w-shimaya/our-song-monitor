@@ -1,9 +1,8 @@
 package com.github.wshimaya.oursongmonitor.io;
 
-import com.github.wshimaya.oursongmonitor.client.S3PlaylistClient;
-import com.github.wshimaya.oursongmonitor.model.PlaylistItem;
+import com.github.wshimaya.oursongmonitor.adapter.playlist.client.S3PlaylistClient;
+import com.github.wshimaya.oursongmonitor.domain.PlaylistItemList;
 import io.micrometer.common.lang.NonNull;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.batch.item.Chunk;
 import org.springframework.stereotype.Component;
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Component;
  */
 @AllArgsConstructor
 @Component
-public class S3PlaylistCacheWriter implements PlaylistWriter {
+public class S3PlaylistSnapshotSnapshotWriter implements PlaylistSnapshotWriter {
 
   /**
    * Cache destination.
@@ -24,8 +23,8 @@ public class S3PlaylistCacheWriter implements PlaylistWriter {
    * {@inheritDoc}
    */
   @Override
-  public void write(@NonNull final Chunk<? extends List<PlaylistItem>> chunk) throws Exception {
-    for (List<PlaylistItem> list : chunk) {
+  public void write(@NonNull final Chunk<? extends PlaylistItemList> chunk) throws Exception {
+    for (PlaylistItemList list : chunk) {
       s3Client.putPlaylist(list);
     }
   }
