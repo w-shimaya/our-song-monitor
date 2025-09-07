@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.github.w-shimaya'
-version = '1.0.0'
+version = '1.1.0'
 
 
 java {
@@ -33,11 +33,9 @@ dependencies {
     implementation 'com.amazonaws:aws-lambda-java-events:3.11.1'
     implementation 'com.google.apis:google-api-services-youtube:v3-rev20210915-1.32.1'
     implementation 'com.amazonaws:aws-lambda-java-log4j2:1.5.1'
-    implementation 'software.amazon.awssdk:s3:2.20.68'
-    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.470'
+    implementation 'software.amazon.awssdk:s3:2.33.3'
     implementation 'org.projectlombok:lombok:1.18.26'
     implementation 'javax.xml.bind:jaxb-api:2.3.1'
-    runtimeOnly 'com.amazonaws:aws-lambda-java-log4j2:1.5.1'
     runtimeOnly 'com.h2database:h2'
 
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'

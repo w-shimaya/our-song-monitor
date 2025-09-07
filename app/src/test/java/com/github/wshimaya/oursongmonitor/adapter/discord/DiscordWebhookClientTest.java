@@ -1,4 +1,4 @@
-package com.github.wshimaya.oursongmonitor.client;
+package com.github.wshimaya.oursongmonitor.adapter.discord;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -7,7 +7,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.github.wshimaya.oursongmonitor.client.DiscordWebhookClient.MessageBody;
+import com.github.wshimaya.oursongmonitor.adapter.discord.DiscordWebhookClient.MessageBody;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -5,8 +5,9 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import com.github.wshimaya.oursongmonitor.client.S3PlaylistClient;
-import com.github.wshimaya.oursongmonitor.model.PlaylistItem;
+import com.github.wshimaya.oursongmonitor.adapter.playlist.client.S3PlaylistClient;
+import com.github.wshimaya.oursongmonitor.domain.PlaylistItem;
+import com.github.wshimaya.oursongmonitor.domain.PlaylistItemList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,19 +16,19 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.batch.item.Chunk;
 
 @ExtendWith(MockitoExtension.class)
-class S3PlaylistCacheWriterTest {
+class S3PlaylistSnapshotWriterTest {
 
   @Mock
   S3PlaylistClient client;
 
   @Test
   void write() throws Exception {
-    List<PlaylistItem> list = List.of(new PlaylistItem());
+    PlaylistItemList list = new PlaylistItemList(List.of(PlaylistItem.builder().build()));
     doNothing().when(client).putPlaylist(any());
 
-    PlaylistWriter target = new S3PlaylistCacheWriter(client);
+    PlaylistSnapshotWriter target = new S3PlaylistSnapshotSnapshotWriter(client);
 
-    target.write(new Chunk<List<PlaylistItem>>(list));
+    target.write(new Chunk<PlaylistItemList>(list));
 
     verify(client, times(1)).putPlaylist(list);
   }

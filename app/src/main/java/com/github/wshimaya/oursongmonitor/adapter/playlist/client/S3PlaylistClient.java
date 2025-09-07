@@ -1,16 +1,16 @@
-package com.github.wshimaya.oursongmonitor.client;
+package com.github.wshimaya.oursongmonitor.adapter.playlist.client;
 
 import static java.util.Objects.isNull;
 
-import com.amazonaws.AmazonServiceException;
-import com.github.wshimaya.oursongmonitor.model.PlaylistItem;
-import com.github.wshimaya.oursongmonitor.model.PlaylistItemList;
+import com.github.wshimaya.oursongmonitor.adapter.S3Ops;
+import com.github.wshimaya.oursongmonitor.domain.PlaylistItemList;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import javax.annotation.Nullable;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import software.amazon.awssdk.services.s3.endpoints.internal.Value.Str;
 
 /**
  * S3 client to download/upload playlist information.
@@ -21,7 +21,7 @@ public class S3PlaylistClient {
   /**
    * S3 client.
    */
-  private final S3Client s3Client;
+  private final S3Ops s3Ops;
 
   /**
    * Directory (prefix) to store playlist info.
@@ -34,7 +34,7 @@ public class S3PlaylistClient {
   private final String bucketName;
 
   /**
-   * Target playlist ID.
+   * Playlist ID.
    */
   private final String playlistId;
 
@@ -44,15 +44,15 @@ public class S3PlaylistClient {
    * @return playlist info
    */
   @Nullable
-  public PlaylistItemList findPreviousPlaylist() {
-    var latestResult = s3Client.findNewestObjectSummary(
+  public PlaylistItemList fetchPlaylistItems() throws IOException {
+    var latestResult = s3Ops.findNewestObject(
         bucketName, s3Directory, playlistId + ".json");
 
     if (isNull(latestResult)) {
       return null;
     }
 
-    return s3Client.getObject(bucketName, latestResult.getKey(), PlaylistItemList.class);
+    return s3Ops.getObject(bucketName, latestResult.key(), PlaylistItemList.class);
   }
 
   /**
@@ -60,12 +60,14 @@ public class S3PlaylistClient {
    *
    * @param playlistItems playlist
    */
-  public void putPlaylist(List<PlaylistItem> playlistItems) throws IOException, AmazonServiceException {
+  public void putPlaylist(PlaylistItemList playlistItems)
+      throws IOException {
     var key = s3Directory
+        + "/"
         + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
         + "-"
         + playlistId
         + ".json";
-    s3Client.putJsonObject(bucketName, key, new PlaylistItemList(playlistItems));
+    s3Ops.putJsonObject(bucketName, key, playlistItems);
   }
 }

@@ -19,7 +19,6 @@ public class S3Configuration {
    * Bucket name.
    */
   @NotEmpty
-  @Pattern(regexp = ".+/$")
   private String bucketName;
 
   /**
@@ -27,4 +26,7 @@ public class S3Configuration {
    */
   @NotBlank
   private String directoryName;
+
+  @NotBlank
+  private String stagingDirectoryName;
 }

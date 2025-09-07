@@ -1,5 +1,7 @@
-package com.github.wshimaya.oursongmonitor.client;
+package com.github.wshimaya.oursongmonitor.adapter.discord;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.common.lang.NonNull;
 import java.net.http.HttpClient;
@@ -26,11 +28,6 @@ public class DiscordWebhookClient {
   private final String webhookUrl;
 
   /**
-   * Mapper {@link ObjectMapper}.
-   */
-  private final ObjectMapper mapper = new ObjectMapper();
-
-  /**
    * Constructor.
    *
    * @param webhookUrl URL of Discord webhook
@@ -48,9 +45,10 @@ public class DiscordWebhookClient {
    */
   public void sendMessage(@NonNull final MessageBody body) {
     try {
-      String response = restTemplate.postForObject(webhookUrl, body, String.class);
+      restTemplate.postForObject(webhookUrl, body, String.class);
     } catch (Exception exception) {
       log.error("Failed to send a discord message: {}", exception.getMessage());
+      throw exception;
     }
   }
 
@@ -60,6 +58,7 @@ public class DiscordWebhookClient {
    */
   @Builder
   @Data
+  @JsonInclude(Include.NON_NULL)
   public static class MessageBody {
 
     /**

@@ -1,8 +1,11 @@
-package com.github.wshimaya.oursongmonitor.client;
+package com.github.wshimaya.oursongmonitor.adapter.playlist.client;
 
 import static java.util.Objects.nonNull;
 
-import com.github.wshimaya.oursongmonitor.model.PlaylistItem;
+import com.github.wshimaya.oursongmonitor.adapter.DomainMapper;
+import com.github.wshimaya.oursongmonitor.adapter.playlist.mapper.YoutubePlaylistItemMapper;
+import com.github.wshimaya.oursongmonitor.domain.PlaylistItem;
+import com.github.wshimaya.oursongmonitor.domain.PlaylistItemList;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTube.PlaylistItems;
 import com.google.api.services.youtube.model.PlaylistItemListResponse;
@@ -12,10 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
+import lombok.AllArgsConstructor;
 
 /**
  * Client of YouTube Data API.
  */
+@AllArgsConstructor
 public class YoutubePlaylistClient {
 
   /**
@@ -28,25 +33,12 @@ public class YoutubePlaylistClient {
    */
   private final String apiKey;
 
-  /**
-   * Target Playlist ID.
-   */
   private final String playlistId;
 
   /**
-   * Constructor.
-   *
-   * @param youtube    Youtube API client
-   * @param apiKey     API key
-   * @param playlistId Playlist ID
+   * Mapper.
    */
-  public YoutubePlaylistClient(@NonNull final YouTube youtube,
-      @NonNull final String apiKey,
-      @NonNull final String playlistId) {
-    this.youtube = youtube;
-    this.apiKey = apiKey;
-    this.playlistId = playlistId;
-  }
+  private final YoutubePlaylistItemMapper mapper;
 
   /**
    * Fetch all items in a playlist. Send some requests if necessary.
@@ -54,7 +46,7 @@ public class YoutubePlaylistClient {
    * @return List of playlist items
    */
   @Nullable
-  public List<PlaylistItem> fetchAllPlaylistItems() throws IOException {
+  public PlaylistItemList fetchAllPlaylistItems() throws IOException {
     List<PlaylistItem> playlistItems = new ArrayList<>();
     String nextPageToken = null;
     do {
@@ -66,27 +58,13 @@ public class YoutubePlaylistClient {
         list = list.setPageToken(nextPageToken);
       }
       PlaylistItemListResponse res = list.execute();
-      var items = res.getItems().stream()
-          .map(YoutubePlaylistClient::extractFields)
+      List<PlaylistItem> items = res.getItems().stream()
+          .map(mapper::map)
           .collect(Collectors.toList());
       playlistItems.addAll(items);
       nextPageToken = res.getNextPageToken();
     } while (nonNull(nextPageToken));
 
-    return playlistItems;
+    return new PlaylistItemList(playlistItems);
   }
-
-  /**
-   * Extract necessary fields from YouTube response.
-   *
-   * @param item item represented in Youtube data model
-   * @return Extracted {@link PlaylistItem}
-   */
-  private static PlaylistItem extractFields(
-      final com.google.api.services.youtube.model.PlaylistItem item) {
-    var ret = new PlaylistItem();
-    item.forEach(ret::set);
-    return ret;
-  }
-
 }
